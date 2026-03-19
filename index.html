@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luís Dev - Cardápio Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #ffcc00; --dark: #121212; --card: #1e1e1e; --text: #ffffff; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--dark); color: var(--text); margin: 0; padding-bottom: 110px; }
+        
+        /* BLOQUEIO DE TESTE */
+        #bloqueio { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 25px; text-align: center; }
+        .btn-ativar { background: var(--primary); color: black; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+
+        /* HEADER E BANNER */
+        header { background: var(--primary); padding: 20px; text-align: center; color: black; clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%); }
+        .banner { width: 100%; height: 180px; object-fit: cover; border-bottom: 4px solid var(--primary); }
+
+        /* MENU CATEGORIAS */
+        .categorias { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: #1a1a1a; sticky: top; }
+        .cat-item { background: #333; padding: 10px 20px; border-radius: 25px; white-space: nowrap; font-size: 14px; border: 1px solid transparent; }
+        .cat-item.active { border-color: var(--primary); color: var(--primary); }
+
+        /* PRODUTOS */
+        .lista-produtos { padding: 15px; }
+        .item-card { background: var(--card); border-radius: 15px; display: flex; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 1px solid #333; overflow: hidden; }
+        .item-img { width: 110px; height: 110px; object-fit: cover; }
+        .item-detalhes { padding: 12px; flex: 1; position: relative; }
+        .item-detalhes h3 { margin: 0; font-size: 16px; margin-bottom: 5px; }
+        .item-detalhes p { font-size: 12px; color: #bbb; margin: 0; line-height: 1.4; }
+        .item-preco { color: var(--primary); font-weight: bold; margin-top: 8px; font-size: 17px; }
+
+        /* BOTÕES DE QUANTIDADE */
+        .qty-box { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+        .btn-qty { background: #333; border: 1px solid var(--primary); color: white; width: 28px; height: 28px; border-radius: 5px; font-weight: bold; }
+
+        /* BARRA DE CARRINHO */
+        .footer-cart { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 20px; border-top: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
+        .btn-finalizar { background: #25D366; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 15px; }
+    </style>
+</head>
+<body>
+
+<div id="bloqueio">
+    <i class="fas fa-lock" style="font-size: 50px; color: var(--primary); margin-bottom: 20px;"></i>
+    <h2>TESTE FINALIZADO</h2>
+    <p>Para usar este cardápio no seu restaurante, pague a licença de <b>300 MT</b> via e-Mola.</p>
+    <input type="text" id="pass" placeholder="Código de Ativação" style="padding: 12px; width: 85%; border-radius: 8px; border: none; margin-bottom: 10px;">
+    <button onclick="checkPass()" class="btn-ativar">ATIVAR AGORA</button>
+    <a href="https://wa.me/258872343542?text=Luís,%20quero%20ativar%20meu%20cardápio" style="color: #25D366; text-decoration: none; margin-top: 20px; font-weight: bold;">FALAR COM DESENVOLVEDOR 📲</a>
+</div>
+
+<img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=800" class="banner" alt="Food">
+<header>
+    <h1 style="margin:0">LUÍS GOURMET 🇲🇿</h1>
+    <p style="margin:5px">O Cardápio Digital Mais Rápido de Marracuene</p>
+</header>
+
+<div class="categorias">
+    <div class="cat-item active">Todos</div>
+    <div class="cat-item">Refeições</div>
+    <div class="cat-item">Pizzas</div>
+    <div class="cat-item">Bebidas</div>
+    <div class="cat-item">Sobremesas</div>
+</div>
+
+<div class="lista-produtos">
+    <div class="item-card">
+        <img src="https://images.unsplash.com/photo-1562967914-608f82629710?w=300" class="item-img">
+        <div class="item-detalhes">
+            <h3>Frango Assado com Batata</h3>
+            <p>Frango suculento, batata frita e molho piripiri.</p>
+            <div class="item-preco">550 MT</div>
+            <div class="qty-box">
+                <button class="btn-qty" onclick="add('frango', -1)">-</button>
+                <span id="q-frango">0</span>
+                <button class="btn-qty" onclick="add('frango', 1)">+</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300" class="item-img">
+        <div class="item-detalhes">
+            <h3>Pizza Família (Mista)</h3>
+            <p>Queijo, fiambre, cogumelos e azeitonas.</p>
+            <div class="item-preco">850 MT</div>
+            <div class="qty-box">
+                <button class="btn-qty" onclick="add('pizza', -1)">-</button>
+                <span id="q-pizza">0</span>
+                <button class="btn-qty" onclick="add('pizza', 1)">+</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=300" class="item-img">
+        <div class="item-detalhes">
+            <h3>Coca-Cola 2L</h3>
+            <p>Bebida fresca para toda a família.</p>
+            <div class="item-preco">150 MT</div>
+            <div class="qty-box">
+                <button class="btn-qty" onclick="add('coca', -1)">-</button>
+                <span id="q-coca">0</span>
+                <button class="btn-qty" onclick="add('coca', 1)">+</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=300" class="item-img">
+        <div class="item-detalhes">
+            <h3>Sorvete Casquinha</h3>
+            <p>Chocolate, Morango ou Baunilha.</p>
+            <div class="item-preco">80 MT</div>
+            <div class="qty-box">
+                <button class="btn-qty" onclick="add('sorvete', -1)">-</button>
+                <span id="q-sorvete">0</span>
+                <button class="btn-qty" onclick="add('sorvete', 1)">+</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer-cart">
+    <div>
+        <div style="font-size: 12px; color: #888;">Total do Pedido</div>
+        <div style="font-size: 20px; font-weight: bold; color: var(--primary);"><span id="total">0</span> MT</div>
+    </div>
+    <button class="btn-finalizar" onclick="enviar()">PEDIR AGORA <i class="fab fa-whatsapp"></i></button>
+</div>
+
+<script>
+    let carrinho = {
+        frango: { nome: "Frango c/ Batata", preco: 550, qtd: 0 },
+        pizza: { nome: "Pizza Família", preco: 850, qtd: 0 },
+        coca: { nome: "Coca-Cola 2L", preco: 150, qtd: 0 },
+        sorvete: { nome: "Sorvete", preco: 80, qtd: 0 }
+    };
+
+    function add(item, delta) {
+        if (carrinho[item].qtd + delta >= 0) {
+            carrinho[item].qtd += delta;
+            document.getElementById('q-' + item).innerText = carrinho[item].qtd;
+            atualizarTotal();
+        }
+    }
+
+    function atualizarTotal() {
+        let t = 0;
+        for (let i in carrinho) t += carrinho[i].qtd * carrinho[i].preco;
+        document.getElementById('total').innerText = t;
+    }
+
+    function enviar() {
+        let msg = "NOVO PEDIDO 🍗\n\n";
+        let tem = false;
+        for (let i in carrinho) {
+            if (carrinho[i].qtd > 0) {
+                msg += `${carrinho[i].qtd}x ${carrinho[i].nome}\n`;
+                tem = true;
+            }
+        }
+        if (!tem) return alert("Adicione itens ao carrinho!");
+        msg += "\nTOTAL: " + document.getElementById('total').innerText + " MT";
+        window.open("https://wa.me/258872343542?text=" + encodeURIComponent(msg));
+    }
+
+    // BLOQUEIO AUTOMÁTICO
+    let tempo = 60;
+    if (localStorage.getItem("pago_luis_pro") === "ok") {
+        document.getElementById('bloqueio').style.display = 'none';
+    } else {
+        let crono = setInterval(() => {
+            tempo--;
+            if (tempo <= 0) {
+                clearInterval(crono);
+                document.getElementById('bloqueio').style.display = 'flex';
+            }
+        }, 1000);
+    }
+
+    function checkPass() {
+        if (document.getElementById('pass').value === "LUIS2026") {
+            localStorage.setItem("pago_luis_pro", "ok");
+            alert("Aplicativo Ativado!");
+            location.reload();
+        } else { alert("Código Incorreto!"); }
+    }
+</script>
+
+</body>
+</html>
